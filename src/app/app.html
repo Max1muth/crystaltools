@@ -1,37 +1,55 @@
 <div class="editor-container">
-  <div class="canvas-wrapper">
-    <div class="background-layer" 
-         [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'">
+  <div class="canvas-section">
+    <div class="canvas-wrapper">
+      <div class="background-layer" [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'"></div>
+      <canvas #mainCanvas (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()"></canvas>
     </div>
-
-    <canvas #mainCanvas 
-            (mousedown)="onMouseDown($event)" 
-            (mousemove)="onMouseMove($event)" 
-            (mouseup)="onMouseUp()">
-    </canvas>
   </div>
 
-  <div class="controls">
-    <h3>Crystools Web v1.0</h3>
+  <div class="side-panel">
+    <div class="panel-header">Crystools v1.0</div>
     
-    <div class="slider-group">
-      <span>Прозрачность холста: {{ opacity }}%</span>
-      <input type="range" min="0" max="100" [(ngModel)]="opacity">
+    <div class="control-row">
+      <div class="row-label"><span>Угол:</span> <b>{{ angle | number:'1.0-0' }}°</b></div>
+      <div class="rotation-main">
+        <button class="mini-btn" (click)="angle = (angle - 15 + 360) % 360">↺</button>
+        <input type="range" min="0" max="360" [(ngModel)]="angle">
+        <button class="mini-btn" (click)="angle = (angle + 15) % 360">↻</button>
+      </div>
+      <div class="precision-grid">
+        <button class="micro-btn" (click)="angle = (angle - 1 + 360) % 360">-1°</button>
+        <button class="micro-btn reset" (click)="angle = 0">СБРОС</button>
+        <button class="micro-btn" (click)="angle = (angle + 1) % 360">+1°</button>
+      </div>
     </div>
 
-    <div class="slider-group">
-      <span>Угол поворота: {{ angle }}°</span>
-      <input type="range" min="0" max="360" [(ngModel)]="angle">
+    <hr class="divider">
+
+    <div class="control-row">
+      <div class="row-label"><span>Альфа:</span> <b>{{ opacity }}%</b></div>
+      <input type="range" min="0" max="100" step="25" [(ngModel)]="opacity" list="opacity-steps">
     </div>
 
-    <div class="actions">
-      <button (click)="mode = 'simple'">Кисть</button>
-      <button (click)="mode = 'extrapolation'">Экстраполяция</button>
-      <button (click)="extrapolate()" class="btn-primary">ЭКСТРАПОЛИРОВАТЬ</button>
-      <button (click)="clear_points()">Очистить точки</button>
-      <button (click)="triggerFileInput()">ЗАГРУЗИТЬ ФОН</button>
+    <div class="control-row inline">
+      <span class="label">Цвет:</span>
+      <input type="color" [(ngModel)]="brushColor" class="color-picker">
     </div>
+
+    <hr class="divider">
+
+    <div class="tools-grid">
+      <button [class.active]="mode === 'simple'" (click)="mode = 'simple'">Кисть</button>
+      <button [class.active]="mode === 'extrapolation'" (click)="mode = 'extrapolation'">Точки</button>
+      <button (click)="clear_points()">Очистить</button>
+      <button (click)="triggerFileInput()">Фон</button>
+    </div>
+
+    <button class="btn-primary" (click)="extrapolate()">ЭКСТРАПОЛИРОВАТЬ</button>
     
     <input type="file" (change)="onFileSelected($event)" id="fileInput" style="display:none" accept="image/*">
   </div>
 </div>
+
+<datalist id="opacity-steps">
+  <option value="0"></option><option value="25"></option><option value="50"></option><option value="75"></option><option value="100"></option>
+</datalist>
