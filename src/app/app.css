@@ -50,3 +50,71 @@ button.active { background: #0056b3; border-color: #007bff; color: white; }
 
 .color-picker { height: 22px; width: 40px; border: 1px solid #444; background: none; cursor: pointer; }
 .divider { border: 0; border-top: 1px solid #333; margin: 2px 0; }
+
+.btn-secondary {
+  background: #4527a0; /* Фиолетовый, чтобы отличить от остальных */
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 8px;
+  margin-top: 5px;
+}
+.btn-secondary:hover { background: #5e35b1; }
+
+.file-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.btn-secondary {
+  background: #3949ab; /* Синий оттенок для экспорта */
+  border: none;
+  color: white;
+  padding: 6px;
+  font-weight: bold;
+}
+
+.btn-upload {
+  background: #006064; /* Бирюзовый для импорта */
+}
+
+.btn-secondary:hover {
+  filter: brightness(1.2);
+}
+
+.btn-primary {
+  margin-top: 5px;
+  background: #2e7d32;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+}
+.color-picker-simple {
+  width: 24px;   /* Ширина квадратика */
+  height: 18px;  /* Высота квадратика */
+  padding: 0;
+  border: 1px solid #555;
+  background: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* Убираем лишние рамки внутри инпута для Chrome */
+.color-picker-simple::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color-picker-simple::-webkit-color-swatch {
+  border: none;
+}
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+/* Можно сделать Undo чуть темнее остальных */
+button:nth-child(3) {
+  background: #424242;
+}

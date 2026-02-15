@@ -30,9 +30,16 @@
       <input type="range" min="0" max="100" step="25" [(ngModel)]="opacity" list="opacity-steps">
     </div>
 
-    <div class="control-row inline">
+    <div class="control-row inline" style="justify-content: flex-start; gap: 8px;">
       <span class="label">Цвет:</span>
-      <input type="color" [(ngModel)]="brushColor" class="color-picker">
+      <input type="color" [(ngModel)]="brushColor" class="color-picker-simple">
+    </div>
+
+    <hr class="divider">
+
+    <div class="file-actions">
+      <button class="btn-secondary" (click)="saveImage()">СКАЧАТЬ СЛОЙ</button>
+      <button class="btn-secondary btn-upload" (click)="triggerLayerInput()">ЗАГРУЗИТЬ В СЛОЙ</button>
     </div>
 
     <hr class="divider">
@@ -41,12 +48,17 @@
       <button [class.active]="mode === 'simple'" (click)="mode = 'simple'">Кисть</button>
       <button [class.active]="mode === 'extrapolation'" (click)="mode = 'extrapolation'">Точки</button>
       <button (click)="clear_points()">Очистить</button>
-      <button (click)="triggerFileInput()">Фон</button>
+      <button (click)="triggerFileInput()">ФОН</button>
     </div>
 
     <button class="btn-primary" (click)="extrapolate()">ЭКСТРАПОЛИРОВАТЬ</button>
     
+    <button (click)="undo()" [disabled]="history.length === 0" title="Отменить последнее действие">
+    UNDO
+    </button>
+    
     <input type="file" (change)="onFileSelected($event)" id="fileInput" style="display:none" accept="image/*">
+    <input type="file" (change)="onLayerFileSelected($event)" id="layerInput" style="display:none" accept="image/*">
   </div>
 </div>
 
