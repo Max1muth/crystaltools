@@ -1,120 +1,131 @@
+/* Контейнер */
 .editor-container {
-  display: flex; justify-content: center; gap: 15px; padding: 15px;
-  background: #121212; min-height: 100vh; color: #eee; font-family: sans-serif;
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 15px;
+  background: #121212;
+  min-height: 100vh;
+  color: #eee;
+  font-family: sans-serif;
+  box-sizing: border-box;
 }
 
+/* Обертка холста */
 .canvas-wrapper {
-  position: relative; width: 800px; height: 600px; background: #000; border: 1px solid #333;
+  position: relative;
+  width: 800px;
+  max-width: 98vw;
+  height: calc(min(800px, 98vw) * 0.75); 
+  background: #000;
+  border: 1px solid #333;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .background-layer {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background-size: contain; background-repeat: no-repeat; background-position: center; z-index: 1;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 1;
 }
 
-canvas { position: absolute; top: 0; left: 0; z-index: 2; cursor: crosshair; }
+canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2;
+  cursor: crosshair;
+  touch-action: none;
+}
 
+/* Панель управления */
 .side-panel {
-  width: 190px; background: #1e1e1e; padding: 12px; border-radius: 4px;
-  border: 1px solid #333; display: flex; flex-direction: column; gap: 12px;
-}
-
-.panel-header { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-
-.control-row { display: flex; flex-direction: column; gap: 4px; }
-.control-row.inline { flex-direction: row; align-items: center; justify-content: space-between; }
-.row-label { display: flex; justify-content: space-between; font-size: 11px; }
-
-.rotation-main { display: flex; align-items: center; gap: 5px; }
-.rotation-main input { flex-grow: 1; }
-
-.precision-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 4px; }
-
-.tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-
-button {
-  background: #333; border: 1px solid #444; color: #ccc; padding: 6px;
-  font-size: 11px; cursor: pointer; border-radius: 2px;
-}
-button:hover { background: #444; color: #fff; }
-button.active { background: #0056b3; border-color: #007bff; color: white; }
-
-.mini-btn { width: 26px; height: 26px; padding: 0; }
-.micro-btn { font-size: 9px; padding: 3px 0; background: #252525; }
-
-.btn-primary {
-  margin-top: 10px; background: #28a745; border: none; color: white;
-  font-weight: bold; padding: 10px; text-transform: uppercase;
-}
-.btn-primary:hover { background: #218838; }
-
-.color-picker { height: 22px; width: 40px; border: 1px solid #444; background: none; cursor: pointer; }
-.divider { border: 0; border-top: 1px solid #333; margin: 2px 0; }
-
-.btn-secondary {
-  background: #4527a0; /* Фиолетовый, чтобы отличить от остальных */
-  border: none;
-  color: white;
-  font-weight: bold;
-  padding: 8px;
-  margin-top: 5px;
-}
-.btn-secondary:hover { background: #5e35b1; }
-
-.file-actions {
+  width: 250px; 
+  background: #1e1e1e;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #333;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 16px;
+  box-sizing: border-box;
 }
 
-.btn-secondary {
-  background: #3949ab; /* Синий оттенок для экспорта */
-  border: none;
-  color: white;
-  padding: 6px;
-  font-weight: bold;
+@media (max-width: 850px) {
+  .editor-container { flex-direction: column; align-items: center; }
+  .side-panel { width: 98vw; max-width: 400px; }
 }
 
-.btn-upload {
-  background: #006064; /* Бирюзовый для импорта */
+/* Элементы управления */
+.panel-header { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+.control-row { display: flex; flex-direction: column; gap: 8px; }
+
+/* ИСПРАВЛЕНИЕ: Блок вращения (Кнопки + Слайдер + Кнопки) */
+.rotation-main { 
+  display: flex; 
+  flex-direction: row; /* ТУТ БЫЛА ОШИБКА: теперь в ряд */
+  align-items: center; 
+  gap: 8px; 
+}
+.rotation-main input[type="range"] { flex-grow: 1; }
+
+/* ИСПРАВЛЕНИЕ: Сетка точности (-1, Сброс, +1) */
+.precision-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1.5fr 1fr; /* ТУТ БЫЛА ОШИБКА: теперь сетка */
+  gap: 6px; 
 }
 
-.btn-secondary:hover {
-  filter: brightness(1.2);
+.control-row.inline { 
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: space-between; 
 }
 
-.btn-primary {
-  margin-top: 5px;
-  background: #2e7d32;
-  border: none;
-  color: white;
-  font-weight: bold;
-  padding: 10px;
-}
-.color-picker-simple {
-  width: 24px;   /* Ширина квадратика */
-  height: 18px;  /* Высота квадратика */
-  padding: 0;
-  border: 1px solid #555;
-  background: none;
-  cursor: pointer;
-  vertical-align: middle;
+/* Сетка инструментов */
+.tools-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 8px; 
 }
 
-/* Убираем лишние рамки внутри инпута для Chrome */
-.color-picker-simple::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-.color-picker-simple::-webkit-color-swatch {
-  border: none;
-}
-button[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  filter: grayscale(1);
+/* Унификация кнопок */
+button {
+  background: #2a2a2a; 
+  border: 1px solid #444; 
+  color: #ccc; 
+  padding: 8px 4px;
+  font-size: 12px; 
+  cursor: pointer; 
+  border-radius: 4px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
-/* Можно сделать Undo чуть темнее остальных */
-button:nth-child(3) {
-  background: #424242;
-}
+.mini-btn { width: 32px; height: 32px; padding: 0; flex-shrink: 0; }
+.micro-btn { font-size: 10px; min-height: 28px; }
+
+button:hover:not([disabled]) { background: #3a3a3a; color: #fff; }
+button.active { background: #0056b3; border-color: #007bff; color: white; }
+button[disabled] { opacity: 0.3; cursor: not-allowed; }
+
+/* Главные кнопки */
+.btn-primary { background: #2e7d32; border: none; color: white; font-weight: bold; padding: 12px; text-transform: uppercase; }
+.file-actions { display: flex; flex-direction: column; gap: 8px; }
+.btn-secondary { background: #3949ab; border: none; color: white; padding: 10px; font-weight: bold; }
+.btn-secondary.btn-upload { background: #006064; }
+
+/* Цвет */
+.color-picker-simple { width: 45px; height: 28px; cursor: pointer; border: 1px solid #555; background: none; padding: 0; }
+.divider { border: 0; border-top: 1px solid #333; margin: 4px 0; }

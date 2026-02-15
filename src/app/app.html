@@ -1,13 +1,23 @@
 <div class="editor-container">
   <div class="canvas-section">
     <div class="canvas-wrapper">
-      <div class="background-layer" [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'"></div>
-      <canvas #mainCanvas (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()"></canvas>
+      <div class="background-layer" 
+           [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'">
+      </div>
+      
+      <canvas #mainCanvas 
+        (mousedown)="onMouseDown($event)" 
+        (mousemove)="onMouseMove($event)" 
+        (mouseup)="onMouseUp()"
+        (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)"
+        (touchend)="onMouseUp()">
+      </canvas>
     </div>
   </div>
 
   <div class="side-panel">
-    <div class="panel-header">Crystools v1.0</div>
+    <div class="panel-header">Crystools v1.1</div>
     
     <div class="control-row">
       <div class="row-label"><span>Угол:</span> <b>{{ angle | number:'1.0-0' }}°</b></div>
@@ -30,7 +40,7 @@
       <input type="range" min="0" max="100" step="25" [(ngModel)]="opacity" list="opacity-steps">
     </div>
 
-    <div class="control-row inline" style="justify-content: flex-start; gap: 8px;">
+    <div class="control-row inline">
       <span class="label">Цвет:</span>
       <input type="color" [(ngModel)]="brushColor" class="color-picker-simple">
     </div>
@@ -47,14 +57,15 @@
     <div class="tools-grid">
       <button [class.active]="mode === 'simple'" (click)="mode = 'simple'">Кисть</button>
       <button [class.active]="mode === 'extrapolation'" (click)="mode = 'extrapolation'">Точки</button>
+      <button (click)="undo()" [disabled]="history.length <= 1" title="Отмена">UNDO</button>
       <button (click)="clear_points()">Очистить</button>
       <button (click)="triggerFileInput()">ФОН</button>
     </div>
 
-    <button class="btn-primary" (click)="extrapolate()">ЭКСТРАПОЛИРОВАТЬ</button>
-    
-    <button (click)="undo()" [disabled]="history.length === 0" title="Отменить последнее действие">
-    UNDO
+    <button class="btn-primary" 
+            (click)="extrapolate()" 
+            [disabled]="mode !== 'extrapolation' || ext_buffer.length < 2">
+      ЭКСТРАПОЛИРОВАТЬ
     </button>
     
     <input type="file" (change)="onFileSelected($event)" id="fileInput" style="display:none" accept="image/*">

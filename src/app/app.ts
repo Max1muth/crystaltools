@@ -33,11 +33,10 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     const canvas = this.canvasRef.nativeElement;
+    // Внутреннее разрешение с учетом DPR
     canvas.width = 800 * this.dpr;
     canvas.height = 600 * this.dpr;
-    canvas.style.width = '800px';
-    canvas.style.height = '600px';
-
+    
     this.ctx = canvas.getContext('2d')!;
     this.ctx.scale(this.dpr, this.dpr);
 
@@ -67,7 +66,6 @@ export class AppComponent implements AfterViewInit {
     this.main_ctx.beginPath();
     this.main_ctx.arc(400, 300, 290, 0, Math.PI * 2);
     this.main_ctx.stroke();
-    // Сохраняем начальное состояние (пустой круг)
     this.saveState();
   }
 
@@ -83,10 +81,17 @@ export class AppComponent implements AfterViewInit {
     requestAnimationFrame(() => this.render());
   }
 
-  private getCoords(e: MouseEvent) {
+  // Универсальный расчет координат (работает и для мыши, и для тача)
+  private getCoords(clientX: number, clientY: number) {
     const rect = this.canvasRef.nativeElement.getBoundingClientRect();
-    const x = (e.clientX - rect.left) - 400;
-    const y = (e.clientY - rect.top) - 300;
+    
+    // Вычисляем масштаб между CSS-размером и логическим размером 800x600
+    const scaleX = 800 / rect.width;
+    const scaleY = 600 / rect.height;
+
+    const x = (clientX - rect.left) * scaleX - 400;
+    const y = (clientY - rect.top) * scaleY - 300;
+    
     const rad = (-this.angle * Math.PI) / 180;
     return {
       x: x * Math.cos(rad) - y * Math.sin(rad) + 400,
@@ -94,27 +99,46 @@ export class AppComponent implements AfterViewInit {
     };
   }
 
-  onMouseDown(e: MouseEvent) { 
-    this.isDrawing = true; 
-    this.handleDrawing(e); 
+  // --- ОБРАБОТКА ВВОДА ---
+
+  onMouseDown(e: MouseEvent) {
+    this.isDrawing = true;
+    this.handleInput(e.clientX, e.clientY);
   }
 
-  onMouseMove(e: MouseEvent) { 
-    if (this.isDrawing) this.handleDrawing(e); 
+  onMouseMove(e: MouseEvent) {
+    if (this.isDrawing) this.handleInput(e.clientX, e.clientY);
   }
 
-  onMouseUp() { 
+  onTouchStart(e: TouchEvent) {
+    e.preventDefault();
+    this.isDrawing = true;
+    const touch = e.touches[0];
+    this.handleInput(touch.clientX, touch.clientY);
+  }
+
+  onTouchMove(e: TouchEvent) {
+    e.preventDefault();
+    if (this.isDrawing) {
+      const touch = e.touches[0];
+      this.handleInput(touch.clientX, touch.clientY);
+    }
+  }
+
+  onMouseUp() {
     if (this.isDrawing && this.mode === 'simple') {
       this.saveState();
     }
-    this.isDrawing = false; 
+    this.isDrawing = false;
   }
 
-  private handleDrawing(e: MouseEvent) {
-    const p = this.getCoords(e);
+  private handleInput(clientX: number, clientY: number) {
+    const p = this.getCoords(clientX, clientY);
     if (this.mode === 'simple') this.drawSimpleBrush(p.x, p.y);
     else this.addToExtrapolation(p.x, p.y);
   }
+
+  // --- РИСОВАНИЕ ---
 
   private drawSimpleBrush(x: number, y: number) {
     this.main_ctx.strokeStyle = this.brushColor;
@@ -166,7 +190,7 @@ export class AppComponent implements AfterViewInit {
     this.main_ctx.lineTo(this.ext_buffer[this.ext_buffer.length - 1].x, this.ext_buffer[this.ext_buffer.length - 1].y);
     this.main_ctx.stroke();
     
-    this.saveState(); // Сохраняем после экстраполяции
+    this.saveState();
     this.clear_points();
   }
 
@@ -178,15 +202,12 @@ export class AppComponent implements AfterViewInit {
   }
 
   public undo() {
-    if (this.history.length <= 1) return; // Оставляем хотя бы один (начальный) кадр
-    
-    this.history.pop(); // Удаляем текущее состояние
+    if (this.history.length <= 1) return;
+    this.history.pop();
     const lastState = this.history[this.history.length - 1];
-    
     const img = new Image();
     img.onload = () => {
       this.main_ctx.save();
-      // Сброс матрицы, чтобы DPR не увеличивал картинку
       this.main_ctx.setTransform(1, 0, 0, 1, 0, 0); 
       this.main_ctx.clearRect(0, 0, this.main_canvas.width, this.main_canvas.height);
       this.main_ctx.drawImage(img, 0, 0);
@@ -201,7 +222,6 @@ export class AppComponent implements AfterViewInit {
     tempCanvas.width = 800;
     tempCanvas.height = 600;
     const tempCtx = tempCanvas.getContext('2d')!;
-    tempCtx.clearRect(0, 0, 800, 600);
     tempCtx.save();
     tempCtx.globalAlpha = this.opacity / 100;
     tempCtx.translate(400, 300);
