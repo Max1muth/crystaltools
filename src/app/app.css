@@ -1,0 +1,48 @@
+/* Контейнер, который ограничивает размер всей рабочей зоны */
+.editor-container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 20px auto; /* Центрируем по горизонтали */
+  background: #428789;
+  border: 2px solid #555;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  overflow: visible; /* Чтобы контролы снизу не обрезались */
+}
+
+/* Слой с фоном — он лежит в самом низу */
+.background-layer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 800px;
+  height: 600px;
+  background-size: contain; /* Картинка впишется целиком */
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 1;
+}
+
+/* Холст — он лежит ПОВЕРХ фона */
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2; /* Выше фона */
+  cursor: crosshair;
+}
+
+/* Панель управления — под контейнером */
+.controls {
+  position: absolute;
+  top: 610px; /* Сразу под холстом */
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  background: #1e1e1e;
+  padding: 15px 0;
+}
+
+.slider-group {
+  margin: 10px 0;
+}
