@@ -1,10 +1,6 @@
 <div class="editor-container">
   <div class="canvas-section">
     <div class="canvas-wrapper">
-      <div class="background-layer" 
-           [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'">
-      </div>
-      
       <canvas #mainCanvas 
         (mousedown)="onMouseDown($event)" 
         (mousemove)="onMouseMove($event)" 
@@ -17,8 +13,33 @@
   </div>
 
   <div class="side-panel">
-    <div class="panel-header">Crystools v1.1</div>
+    <div class="panel-header">Crystools v1.8</div>
     
+    <div class="control-row">
+      <div class="row-label">
+        <span>Навигация:</span> 
+        <b [style.color]="mode === 'move' ? '#03dac6' : '#e0e0e0'">
+          {{ mode === 'move' ? 'ПЕРЕМЕЩЕНИЕ' : ((zoom * 100) | number:'1.0-0' + '%') }}
+        </b>
+      </div>
+      <div class="rotation-main">
+        <button class="mini-btn" (click)="zoom = zoom > 1.1 ? zoom - 0.2 : 1">－</button>
+        <input type="range" min="1" max="4" step="0.1" [(ngModel)]="zoom">
+        <button class="mini-btn" (click)="zoom = zoom < 3.9 ? zoom + 0.2 : 4">＋</button>
+      </div>
+      <div class="precision-grid">
+        <button class="micro-btn" [class.active-move]="mode === 'move'" (click)="toggleMoveMode()">
+          {{ mode === 'move' ? '✅ РУКА' : '🖐️ РУКА' }}
+        </button>
+        <button class="micro-btn" (click)="cycleZoom()">
+          ЗУМ: {{ (zoom | number:'1.0-1') }}x
+        </button>
+        <button class="micro-btn" (click)="resetView()">СБРОС</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
     <div class="control-row">
       <div class="row-label"><span>Угол:</span> <b>{{ angle | number:'1.0-0' }}°</b></div>
       <div class="rotation-main">
@@ -28,20 +49,15 @@
       </div>
       <div class="precision-grid">
         <button class="micro-btn" (click)="angle = (angle - 1 + 360) % 360">-1°</button>
-        <button class="micro-btn reset" (click)="angle = 0">СБРОС</button>
+        <button class="micro-btn reset" (click)="angle = 0">0°</button>
         <button class="micro-btn" (click)="angle = (angle + 1) % 360">+1°</button>
       </div>
     </div>
 
     <hr class="divider">
 
-    <div class="control-row">
-      <div class="row-label"><span>Альфа:</span> <b>{{ opacity }}%</b></div>
-      <input type="range" min="0" max="100" step="25" [(ngModel)]="opacity" list="opacity-steps">
-    </div>
-
     <div class="control-row inline">
-      <span class="label">Цвет:</span>
+      <span class="label">Цвет кисти:</span>
       <input type="color" [(ngModel)]="brushColor" class="color-picker-simple">
     </div>
 
@@ -57,9 +73,9 @@
     <div class="tools-grid">
       <button [class.active]="mode === 'simple'" (click)="mode = 'simple'">Кисть</button>
       <button [class.active]="mode === 'extrapolation'" (click)="mode = 'extrapolation'">Точки</button>
-      <button (click)="undo()" [disabled]="history.length <= 1" title="Отмена">UNDO</button>
+      <button (click)="undo()" [disabled]="history.length <= 1">UNDO</button>
       <button (click)="clear_points()">Очистить</button>
-      <button (click)="triggerFileInput()">ФОН</button>
+      <button (click)="triggerFileInput()" style="grid-column: span 2;">ИЗМЕНИТЬ ФОН</button>
     </div>
 
     <button class="btn-primary" 
@@ -72,7 +88,3 @@
     <input type="file" (change)="onLayerFileSelected($event)" id="layerInput" style="display:none" accept="image/*">
   </div>
 </div>
-
-<datalist id="opacity-steps">
-  <option value="0"></option><option value="25"></option><option value="50"></option><option value="75"></option><option value="100"></option>
-</datalist>
