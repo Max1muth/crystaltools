@@ -1,33 +1,37 @@
 <div class="editor-container">
-  <div class="background-layer" 
-     [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'">
+  <div class="canvas-wrapper">
+    <div class="background-layer" 
+         [style.backgroundImage]="backgroundImage ? 'url(' + backgroundImage + ')' : 'none'">
+    </div>
+
+    <canvas #mainCanvas 
+            (mousedown)="onMouseDown($event)" 
+            (mousemove)="onMouseMove($event)" 
+            (mouseup)="onMouseUp()">
+    </canvas>
   </div>
-  <canvas #mainCanvas 
-          (mousedown)="onMouseDown($event)" 
-          (mousemove)="onMouseMove($event)" 
-          (mouseup)="onMouseUp()">
-  </canvas>
 
   <div class="controls">
     <h3>Crystools Web v1.0</h3>
     
     <div class="slider-group">
-      <p>Прозрачность холста: {{ opacity }}%</p>
+      <span>Прозрачность холста: {{ opacity }}%</span>
       <input type="range" min="0" max="100" [(ngModel)]="opacity">
     </div>
 
     <div class="slider-group">
-      <p>Угол поворота: {{ angle }}°</p>
+      <span>Угол поворота: {{ angle }}°</span>
       <input type="range" min="0" max="360" [(ngModel)]="angle">
     </div>
 
     <div class="actions">
       <button (click)="mode = 'simple'">Кисть</button>
       <button (click)="mode = 'extrapolation'">Экстраполяция</button>
-      <button (click)="extrapolate()">ЭКСТРАПОЛИРОВАТЬ</button>
+      <button (click)="extrapolate()" class="btn-primary">ЭКСТРАПОЛИРОВАТЬ</button>
       <button (click)="clear_points()">Очистить точки</button>
-      <input type="file" (change)="onFileSelected($event)" accept="image/*" id="fileInput" style="display:none">
       <button (click)="triggerFileInput()">ЗАГРУЗИТЬ ФОН</button>
     </div>
+    
+    <input type="file" (change)="onFileSelected($event)" id="fileInput" style="display:none" accept="image/*">
   </div>
 </div>
